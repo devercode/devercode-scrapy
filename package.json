@@ -2,7 +2,7 @@
   "name": "devercode-scrapy",
   "private": false,
   "main": "dist/index.js",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "author": {
     "email": "devercode@gmail.com",
     "name": "devercode"
