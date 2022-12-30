@@ -93,4 +93,13 @@ describe("Curl", () => {
       isBlocked: false,
     };
   });
+
+  it("can work with params", async () => {
+    scraper.useProxy(undefined);
+    await scraper.get("http://localhost:3000/list", {
+      params: {
+        type: "blur",
+      },
+    });
+  });
 });

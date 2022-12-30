@@ -2,6 +2,7 @@ export { Curl } from "./curl";
 
 export interface DvRequestOpts {
   headers?: Record<string, any>;
+  params?: Record<string, any>;
 }
 
 export class ScraperRequestError {

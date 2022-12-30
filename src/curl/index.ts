@@ -8,6 +8,7 @@ import {
 import path from "path";
 import _ from "lodash";
 import dirtyJson from "dirty-json";
+import qs from "qs";
 
 const browsers = [
   {
@@ -222,6 +223,10 @@ export class Curl implements IScraperAdapter {
         headerString = headerString += `-H '${key}: ${opts.headers[key]}' `;
       });
     }
+    if (opts.params) {
+      const query = qs.stringify(opts.params);
+      url = `${url}?${query}`;
+    }
     const curlString = `${this._getCurlExec()} ${headerString} -i -L ${
       this.proxy ? ` -x ${this.proxy}` : ""
     } --connect-timeout 10 --max-time 10 ${url}`;
@@ -262,6 +267,11 @@ export class Curl implements IScraperAdapter {
       Object.keys(opts.headers).forEach((key) => {
         headerString = headerString += `-H '${key}: ${opts.headers[key]}' `;
       });
+    }
+
+    if (opts.params) {
+      const query = qs.stringify(opts.params);
+      url = `${url}?${query}`;
     }
     const curlString = `${this._getCurlExec()} ${headerString} -i -L -X POST -d '${JSON.stringify(
       data
