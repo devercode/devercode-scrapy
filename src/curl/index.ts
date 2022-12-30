@@ -270,6 +270,9 @@ export class Curl implements IScraperAdapter {
     const { stdout, stderr, code, error } = await shell(curlString);
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
+      try {
+        payload.body = JSON.parse(payload.body);
+      } catch (err) {}
       if ([200, 201, 301].includes(payload.status)) {
         return {
           //@ts-ignore
