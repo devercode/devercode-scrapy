@@ -5,6 +5,10 @@ export interface DvRequestOpts {
   params?: Record<string, any>;
 }
 
+export interface DefaultOpts {
+  headers?: Record<string, any>;
+}
+
 export class ScraperRequestError {
   status: number;
   headers: Record<any, string>;
@@ -17,6 +21,7 @@ export class ScraperRequestError {
 }
 export class ScraperError extends Error {}
 export interface IScraper {
+  proxy?: string;
   get<T>(
     url: string,
     opts?: DvRequestOpts
@@ -34,6 +39,7 @@ export interface IScraper {
     headers: Record<string, unknown>;
     status: number;
   }>;
+  setDefaultOpts(opts: DvRequestOpts): void;
 }
 
 export interface IScraperAdapter {
@@ -58,13 +64,11 @@ export interface IScraperAdapter {
   }>;
 }
 export class Scraper implements IScraper {
-  private adapter: IScraperAdapter;
   proxy?: string;
-  private ja3?: string;
-  private userAgent: string;
-  constructor(adapter: IScraperAdapter) {
-    this.adapter = adapter;
-  }
+  constructor(
+    private adapter: IScraperAdapter,
+    private defaultOpts?: DefaultOpts
+  ) {}
 
   get<T>(
     url: string,
@@ -74,11 +78,13 @@ export class Scraper implements IScraper {
     headers: Record<string, unknown>;
     status: number;
   }> {
+    const headers = {
+      ...(this.defaultOpts?.headers ? this.defaultOpts?.headers : {}),
+      ...(opts?.headers ? opts?.headers : {}),
+    };
     return this.adapter.get(url, {
       ...opts,
-      headers: {
-        ...(opts?.headers ? opts.headers : {}),
-      },
+      headers,
     });
   }
 
@@ -91,16 +97,23 @@ export class Scraper implements IScraper {
     headers: Record<string, unknown>;
     status: number;
   }> {
+    const headers = {
+      ...(this.defaultOpts?.headers ? this.defaultOpts?.headers : {}),
+      ...(opts?.headers ? opts?.headers : {}),
+    };
     return this.adapter.post(url, data, {
       ...opts,
 
-      headers: {
-        ...(opts.headers ? opts.headers : {}),
-      },
+      headers,
     });
   }
 
   useProxy(proxy: string) {
+    this.proxy = proxy;
     this.adapter.proxy = proxy;
+  }
+
+  setDefaultOpts(opts: DvRequestOpts): void {
+    this.defaultOpts = opts;
   }
 }
