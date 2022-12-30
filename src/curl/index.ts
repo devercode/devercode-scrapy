@@ -1,4 +1,5 @@
-import shell from "shell-exec";
+// import shell from "shell-exec";
+import { exec } from "child_process";
 import {
   DvRequestOpts,
   IScraperAdapter,
@@ -7,8 +8,20 @@ import {
 } from "..";
 import path from "path";
 import _ from "lodash";
-import dirtyJson from "dirty-json";
 import qs from "qs";
+
+const shell = (cmd: string): Promise<any> => {
+  return new Promise((resolve) => {
+    exec(cmd, (err, stdout, stderr) => {
+      resolve({
+        stdout,
+        stderr,
+        code: err?.code ? err.code : 0,
+        error: err,
+      });
+    });
+  });
+};
 
 const browsers = [
   {
@@ -234,7 +247,7 @@ export class Curl implements IScraperAdapter {
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
       try {
-        payload.body = dirtyJson.parse(payload.body);
+        payload.body = JSON.parse(payload.body);
       } catch (err) {}
       if ([200, 201, 301].includes(payload.status)) {
         return {
@@ -278,11 +291,12 @@ export class Curl implements IScraperAdapter {
     )}'${
       this.proxy ? ` -x ${this.proxy}` : ""
     } --connect-timeout 10 --max-time 10 ${url}`;
+
     const { stdout, stderr, code, error } = await shell(curlString);
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
       try {
-        payload.body = dirtyJson.parse(payload.body);
+        payload.body = JSON.parse(payload.body);
       } catch (err) {}
       if ([200, 201, 301].includes(payload.status)) {
         return {

@@ -1,6 +1,6 @@
 import { Curl } from "../curl";
 import path from "path";
-import { Scraper, ScraperRequestError } from "..";
+import { Scraper, ScraperError, ScraperRequestError } from "..";
 describe("Curl", () => {
   const curl = new Curl();
   const scraper = new Scraper(curl);
@@ -30,8 +30,12 @@ describe("Curl", () => {
     const { data } = await scraper.get("https://www.showmyip.com");
   });
   it("Can handle proxy error", async () => {
-    scraper.useProxy("http://jnsunknlz:bhs71x4u0ay8@45.41.177.87:5737");
-    await expect(scraper.get("https://www.showmyip.com")).rejects.toThrow();
+    try {
+      scraper.useProxy("http://jnsunknlz:bhs71x4u0ay8@45.41.177.87:5737");
+      await scraper.get("https://www.showmyip.com");
+    } catch (err) {
+      expect(err instanceof ScraperError).toBeTruthy();
+    }
   });
 
   it("can handle bad request", async () => {
@@ -96,7 +100,7 @@ describe("Curl", () => {
 
   it("can work with params", async () => {
     scraper.useProxy(undefined);
-    await scraper.get("http://localhost:3000/list", {
+    await scraper.get("http://208.73.206.234:3000/list", {
       params: {
         type: "blur",
       },
