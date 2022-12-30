@@ -7,6 +7,7 @@ import {
 } from "..";
 import path from "path";
 import _ from "lodash";
+import dirtyJson from "dirty-json";
 
 const browsers = [
   {
@@ -218,7 +219,7 @@ export class Curl implements IScraperAdapter {
     let headerString = "";
     if (opts.headers) {
       Object.keys(opts.headers).forEach((key) => {
-        headerString = headerString += `-H '${key}: ${opts.headers[key]}'`;
+        headerString = headerString += `-H '${key}: ${opts.headers[key]}' `;
       });
     }
     const curlString = `${this._getCurlExec()} ${headerString} -i -L ${
@@ -228,7 +229,7 @@ export class Curl implements IScraperAdapter {
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
       try {
-        payload.body = JSON.parse(payload.body);
+        payload.body = dirtyJson.parse(payload.body);
       } catch (err) {}
       if ([200, 201, 301].includes(payload.status)) {
         return {
@@ -259,7 +260,7 @@ export class Curl implements IScraperAdapter {
     let headerString = "";
     if (opts.headers) {
       Object.keys(opts.headers).forEach((key) => {
-        headerString = headerString += `-H '${key}: ${opts.headers[key]}'`;
+        headerString = headerString += `-H '${key}: ${opts.headers[key]}' `;
       });
     }
     const curlString = `${this._getCurlExec()} ${headerString} -i -L -X POST -d '${JSON.stringify(
@@ -271,7 +272,7 @@ export class Curl implements IScraperAdapter {
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
       try {
-        payload.body = JSON.parse(payload.body);
+        payload.body = dirtyJson.parse(payload.body);
       } catch (err) {}
       if ([200, 201, 301].includes(payload.status)) {
         return {
