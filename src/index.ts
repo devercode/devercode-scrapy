@@ -1,3 +1,5 @@
+import { Browser, Curl } from "./curl";
+
 export { Curl } from "./curl";
 
 export interface DvRequestOpts {
@@ -115,5 +117,21 @@ export class Scraper implements IScraper {
 
   setDefaultOpts(opts: DvRequestOpts): void {
     this.defaultOpts = opts;
+  }
+
+  setCurlBrowser(browser: Browser) {
+    if (!(this.adapter instanceof Curl)) {
+      throw new Error("Adapter isnt Curl");
+    } else {
+      this.adapter.setBrowser(browser);
+    }
+  }
+
+  getBrowser(): Browser {
+    if (!(this.adapter instanceof Curl)) {
+      throw new Error("Adapter isnt Curl");
+    } else {
+      return this.adapter.getBrowser();
+    }
   }
 }
