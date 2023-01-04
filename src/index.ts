@@ -11,11 +11,12 @@ export interface DefaultOpts {
   headers?: Record<string, any>;
 }
 
-export class ScraperRequestError {
+export class ScraperRequestError extends Error {
   status: number;
   headers: Record<any, string>;
   data: any;
   constructor({ status, headers, data }) {
+    super();
     this.status = status;
     this.headers = headers;
     this.data = data;

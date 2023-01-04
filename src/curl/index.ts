@@ -261,7 +261,7 @@ export class Curl implements IScraperAdapter {
     }
     const curlString = `${this._getCurlExec()} ${headerString} -i -L ${
       this.proxy ? ` -x ${this.proxy}` : ""
-    } --connect-timeout 10 --max-time 10 -k ${url}`;
+    } --connect-timeout 30 --max-time 30 -k ${url}`;
     const { stdout, stderr, code, error } = await shell(curlString);
     if (code === 0) {
       const payload = this._stdToOutPut(stdout);
@@ -309,7 +309,7 @@ export class Curl implements IScraperAdapter {
       data
     )}'${
       this.proxy ? ` -x ${this.proxy}` : ""
-    } --connect-timeout 10 --max-time 10 -k ${url}`;
+    } --connect-timeout 30 --max-time 30 -k ${url}`;
 
     const { stdout, stderr, code, error } = await shell(curlString);
     if (code === 0) {
